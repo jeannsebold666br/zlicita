@@ -16,9 +16,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.driver = webdriver.Chrome()
         self.driver.implicitly_wait(10)
         
-        self.db = pymysql.connect(user="root",passwd="tux",db="zlicita", host="localhost")
-        #self.db = MySQLdb.Connection(user="root",passwd="tux",db="zlicita", host="localhost")#, charset="utf8",  use_unicode=True)
-
+        self.db = pymysql.connect(user="root",passwd="tux",db="zlicita", host="localhost",  charset="utf8",  use_unicode=True)
 
 
     def test_main(self):
@@ -110,39 +108,49 @@ class PythonOrgSearch(unittest.TestCase):
         print("--- Total: {} - Coletado: {} - Dia:{} ---".format(total, coletado, dia))
 
 
-
+        paginas_start = coletado / 10
+        paginas_start = int(paginas_start)+1
+        if(paginas_start == 10): paginas_start = 1
 
         paginas = total/10
-        #if coletado == 0: coletado = 1
-        coletado = coletado+1
-        paginas_start = 1.0 * (coletado / 10)
-        form_start = coletado % 10
-        if paginas_start < 1 :
-            paginas_start = 1
-        else:
-            paginas_start = int(paginas_start)
         if paginas < 1: paginas = 1
+        paginas = int(paginas)
+        if((total % 10) > 0): paginas = paginas + 1
+
+        coletado = coletado+1
+
+        form_end = 11
+        if( ((total % 10) > 0) and (paginas_start == paginas)): form_end = (total % 10)
+        form_start = coletado % 10
         if form_start == 0: form_start = 10
 
-        paginas_start = int(paginas_start)
-        paginas = int(paginas)
 
         for pagina in range(paginas_start,paginas+1):
-            print("## Pagina Start {} - Pagina atual {} de {} - form {} ##".format(paginas_start, pagina, paginas, form_start))
+            print("## total= {} - pagina_start= {} - pagina= {} - paginas= {} - form_start {} - form_end= {} ##".format(total, paginas_start, pagina, paginas, form_start, form_end))
 
             url = "https://www.comprasnet.gov.br/ConsultaLicitacoes/ConsLicitacao_Relacao.asp?numprp=&dt_publ_ini="+dia+"&dt_publ_fim="+dia+"&chkModalidade=1,2,3,20,5,99&chk_concor=&chk_pregao=&chk_rdc=&optTpPesqMat=M&optTpPesqServ=S&chkTodos=-1&chk_concorTodos=&chk_pregaoTodos=&txtlstUf=&txtlstMunicipio=&txtlstUasg=&txtlstGrpMaterial=&txtlstClasMaterial=&txtlstMaterial=&txtlstGrpServico=&txtlstServico=&txtObjeto=&numpag="+str(pagina)
 
 
-            for form in range(form_start,11):
+            for form in range(form_start,form_end):
                 driver.get(url)
 
                 time.sleep(2)
 
                 i = datetime.now()
                 registro_dtstart = i.strftime('%Y-%m-%d %H:%M:%S')
-                numero_registro = (pagina*10)+form
-                print
+
+                if(pagina == 1):
+                    numero_registro = form
+                else:
+                    numero_registro = ((pagina-1)*10)+form
+
+
+                if(numero_registro > total): return driver
+
+                print()
                 print("--< Iniciando coleta registro #{} em {} >--".format(numero_registro, registro_dtstart))
+                print("--< Iniciando url Pagina - {} >--".format(url))
+                print("## total= {} - pagina_start= {} - pagina= {} - paginas= {} - form_start {} - form_end= {} ##".format(total, paginas_start, pagina, paginas, form_start, form_end))
 
 
                 cidade_estado = driver.find_element_by_xpath("/html/body/table[2]/tbody/tr[3]/td[2]/form["+str(form)+"]/table/tbody/tr[1]/td[2]/table/tbody/tr/td[2]").text
@@ -237,13 +245,17 @@ class PythonOrgSearch(unittest.TestCase):
                 html = driver.page_source
 
                 # Coleta a url de download
-                driver.find_element_by_name('Download').click()
-                atual = driver.current_window_handle
-                for handle in driver.window_handles:
-                    driver.switch_to_window(handle)
-                link_download = driver.current_url
-                driver.close()
-                driver.switch_to_window(atual)
+                try:
+                    driver.find_element_by_name('Download').click()
+                    atual = driver.current_window_handle
+                    for handle in driver.window_handles:
+                        driver.switch_to_window(handle)
+                    link_download = driver.current_url
+                    driver.close()
+                    driver.switch_to_window(atual)
+                except:
+                    link_download = ''
+                    print("###### Não possui URL para download ######")
 
                 cidade_estado = cidade_estado.split("-")
                 cidade = cidade_estado[0]
@@ -272,12 +284,7 @@ class PythonOrgSearch(unittest.TestCase):
 
                 i = datetime.now()
                 registro_dtend = i.strftime('%Y-%m-%d %H:%M:%S')
-                #page_source = str(driver.page_source)
-                #page_source = page_source.encode('utf-8')
                 page_source = driver.page_source
-                #page_source = page_source.encode('latin-1')
-                #page_source = unicode(page_source.strip(codecs.BOM_UTF8), 'latin-1')
-                #page_source = ""
 
                 registros = [
                     id_coleta,
@@ -308,7 +315,7 @@ class PythonOrgSearch(unittest.TestCase):
                 self.atualizaColeta(id_coleta, total, numero_registro, registro_dtstart, registro_dtend)
 
 
-                print
+                print()
                 print("--> Finalizado coleta registro #{} em {} <--".format(numero_registro, registro_dtend))
 
 
@@ -320,13 +327,7 @@ class PythonOrgSearch(unittest.TestCase):
 
     def insertRegistro(self, registros):
         db = self.db
-        #db = MySQLdb.connect("localhost","root","tux","zlicita")
         cursor = db.cursor()
-        #var_string = ', '.join("'{}'" * len(registros))
-        #var_string = "'{}'," * len(registros)
-        #print
-        #print len(registros)
-        #var_string = var_string[0:len(var_string)-1]
         sql = "INSERT INTO registro "\
               "(id_coleta, numero_registro, cidade, estado, uasg, orgao1, orgao2, orgao3, pregao, objeto, edital, endereco, telefone, fax, proposta, item_material, item_servico, html, link_download, url, data_inicio_coleta, data_fim_coleta)" \
               " VALUES('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');" \
@@ -355,29 +356,10 @@ class PythonOrgSearch(unittest.TestCase):
                 registros[21]
               )
 
-
-
-        #sql = unicode(sql,'iso-8859-1')
-        #sql = unicode(sql,'utf-8')
-        #sql = sql.decode('utf-8').encode('utf-8')
-        #sql = sql.encode('iso-8859-1')
-        #sql = sql.encode('utf8')
-        #sql = db.escape_string(sql)
-        #charset = db.character_set_name()
-        #sql = sql.encode(charset)
-        #sql = sql.decode('ascii', 'ignore')
-        #sql = sql.decode('iso8859-15')
-        #sql = unicode(sql,'utf-8')
-        #sql = db.escape_string(sql)
-        #sql = sql.encode('utf-8')
-        #sql = sql.encode('iso-8859-1')
-
-
         print(sql)
 
         cursor.execute(sql)
         db.commit()
-        #db.close()
 
 
     def tearDown(self):
@@ -418,9 +400,10 @@ class PythonOrgSearch(unittest.TestCase):
         cursor = db.cursor()
         sql = "SELECT id_coleta,COALESCE(qtd_registro,0), COALESCE(qtd_coletado,0), DATE_FORMAT(data,'%d/%m/%Y') " \
               "  FROM coleta " \
-              " WHERE  finalizado = 0"
-              #" WHERE finalizado = 0"
+              " WHERE  finalizado = 0 AND ((qtd_coletado < qtd_registro) OR (qtd_registro IS NULL)) " \
+              "ORDER BY data"
 
+        print(sql)
         cursor.execute(sql)
         results = cursor.fetchall()
         
