@@ -91,6 +91,12 @@ class RegistroTable extends AbstractTableGateway
     }
 
 
+    /**
+     *
+     * @param $id
+     * @return array|\ArrayObject|null
+     * @throws \Exception
+     */
     public function find($id)
     {
         if(!($id > 0)){
@@ -108,6 +114,10 @@ class RegistroTable extends AbstractTableGateway
     }
 
 
+    /**
+     * @return array
+     *
+     */
     public function relatorioGeral(){
         $adapter = $this->getAdapter();
         $sql = "SELECT COUNT(*) AS 'total_dias' FROM coleta";
@@ -146,7 +156,7 @@ class RegistroTable extends AbstractTableGateway
         $adapter = $this->getAdapter();
         $sql = "SELECT table_schema AS 'Database name', SUM(data_length + index_length) / 1024 / 1024 AS 'tamanho_schema'
                 FROM information_schema.TABLES
-                WHERE  table_schema = 'zlicita'
+                WHERE  table_schema = '".$this->getAdapter()->getDriver()->getConnection()->getCurrentSchema()."'
                 GROUP BY table_schema;";
         $statement = $adapter->query($sql);
         $results = $statement->execute();

@@ -20,6 +20,7 @@ class IndexController extends AbstractActionController
     {
         $form = new Pesquisa();
         $request = $this->getRequest();
+        $page = $this->params()->fromRoute('page',1);
         $paginator = array();
         $session =  $this->getServiceLocator()->get('Session');
         $reset = false;
@@ -61,7 +62,7 @@ class IndexController extends AbstractActionController
 
             try {
                 $paginator = $registro->pesquisar($data);
-                $paginator->setCurrentPageNumber(1)
+                $paginator->setCurrentPageNumber($page)
                     ->setItemCountPerPage(100)
                     ->setPageRange(20);
 
