@@ -38,7 +38,8 @@ return array(
                 'label' => 'Home',
                 'route' => 'home',
                 'resource' => 'Application\Controller\Index.index',
-                'icon' => 'glyphicon glyphicon-home'
+                'icon' => 'glyphicon glyphicon-home',
+                'order' => -100,
             ),
             array(
                 'label' => 'Painel',
@@ -50,13 +51,15 @@ return array(
                 'label' => 'Entrar',
                 'uri' => '/admin/auth',
                 'resource' => 'Admin\Controller\Auth.login',
-                'icon' => 'glyphicon glyphicon-log-in'
+                'icon' => 'glyphicon glyphicon-log-in',
+                'order' => 100,
             ),
             array(
                 'label' => 'Sair',
                 'uri' => '/admin/auth/logout',
                 'resource' => 'Admin\Controller\Auth.logout',
-                'icon' => 'glyphicon glyphicon-log-out'
+                'icon' => 'glyphicon glyphicon-log-out',
+                'order' => 101,
             ),
         ),
     ),
@@ -86,6 +89,7 @@ return array(
                 'allow' => array(
                     'Admin\Controller\Index.index',
                     'Admin\Controller\Auth.logout',
+
                 )
             ),
         )

@@ -1,0 +1,80 @@
+<?php if ($this->pageCount): ?>
+    <ul>
+        <li><strong>Total de registros: </strong><?php echo $this->totalItemCount; ?></li>
+        <li><strong>Total de páginas: </strong><?php echo $this->pageCount; ?></li>
+    </ul>
+    <div class="pagination-centered">
+        <ul class="pagination">
+            <!-- Previous page link -->
+            <?php if (isset($this->first) &&  $this->current != $this->first): ?>
+                <li>
+                    <a href="<?php echo $this->url($this->route).'/'.$this->controllerName.'/'.$this->actionName.'/page/'.$this->first; ?>">
+                        Primeiro
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="disabled">
+                    <a href="#">
+                        Primeiro
+                    </a>
+                </li>
+            <?php endif; ?>
+            <!-- Previous page link -->
+            <?php if (isset($this->previous)): ?>
+                <li>
+                    <a href="<?php echo $this->url($this->route).'/'.$this->controllerName.'/'.$this->actionName.'/page/'.$this->previous; ?>">
+                         Anterior
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="disabled">
+                    <a href="#">
+                        Anterior
+                    </a>
+                </li>
+            <?php endif; ?>
+            <!-- Numbered page links -->
+            <?php foreach ($this->pagesInRange as $page): ?>
+                <?php if ($page != $this->current): ?>
+                    <li>
+                        <a href="<?php echo $this->url($this->route).'/'.$this->controllerName.'/'.$this->actionName.'/page/'.$page; ?>">
+                            <?php echo $page; ?>
+                        </a>
+                    </li>
+                <?php else: ?>
+                    <li class="active">
+                        <a href="#"><?php echo $page; ?></a>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+
+            <!-- Next page link -->
+            <?php if (isset($this->next)): ?>
+                <li>
+                    <a href="<?php echo $this->url($this->route).'/'.$this->controllerName.'/'.$this->actionName.'/page/'.$this->next; ?>">
+                        Próximo
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="disabled">
+                    <a href="#">
+                        Próximo
+                    </a>
+                </li>
+            <?php endif; ?>
+            <?php if (isset($this->last) &&  $this->current != $this->last): ?>
+                <li>
+                    <a href="<?php echo $this->url($this->route).'/'.$this->controllerName.'/'.$this->actionName.'/page/'.$this->last; ?>">
+                        Ultimo
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="disabled">
+                    <a href="#">
+                        Ultimo
+                    </a>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </div>
+<?php endif; ?>
