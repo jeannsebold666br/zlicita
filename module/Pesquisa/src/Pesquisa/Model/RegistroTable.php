@@ -106,4 +106,63 @@ class RegistroTable extends AbstractTableGateway
 
         return $row;
     }
+
+
+    public function relatorioGeral(){
+        $adapter = $this->getAdapter();
+        $sql = "SELECT COUNT(*) AS 'total_dias' FROM coleta";
+        $statement = $adapter->query($sql);
+        $results = $statement->execute();
+        $row = $results->current();
+        $total_dias = $row['total_dias'];
+
+
+        $sql = "SELECT
+                    (SELECT MIN(data) AS 'min_dia' FROM coleta) AS 'min_dia',
+                    (SELECT MAX(data) AS 'max_dia' FROM coleta) AS 'max_dia'";
+        $statement = $adapter->query($sql);
+        $results = $statement->execute();
+        $row = $results->current();
+        $min_dia = $row['min_dia'];
+        $max_dia = $row['max_dia'];
+
+
+        $adapter = $this->getAdapter();
+        $sql = "SELECT COUNT(*) AS 'total_registros' FROM registro";
+        $statement = $adapter->query($sql);
+        $results = $statement->execute();
+        $row = $results->current();
+        $total_registros = $row['total_registros'];
+
+
+        $adapter = $this->getAdapter();
+        $sql = "SELECT COUNT(*) AS 'total_cidades' FROM (SELECT DISTINCT(cidade) FROM registro) AS a";
+        $statement = $adapter->query($sql);
+        $results = $statement->execute();
+        $row = $results->current();
+        $total_cidades = $row['total_cidades'];
+
+
+        $adapter = $this->getAdapter();
+        $sql = "SELECT table_schema AS 'Database name', SUM(data_length + index_length) / 1024 / 1024 AS 'tamanho_schema'
+                FROM information_schema.TABLES
+                WHERE  table_schema = 'zlicita'
+                GROUP BY table_schema;";
+        $statement = $adapter->query($sql);
+        $results = $statement->execute();
+        $row = $results->current();
+        $tamanho_schema = (int)$row['tamanho_schema'];
+
+
+        return array(
+            'total_dias'        => $total_dias,
+            'min_dia'           => $min_dia,
+            'max_dia'           => $max_dia,
+            'total_registros'   => $total_registros,
+            'total_cidades'     => $total_cidades,
+            'total_cidades'     => $total_cidades,
+            'tamanho_schema'    => $tamanho_schema,
+        );
+
+    }
 }

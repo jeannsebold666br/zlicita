@@ -1,19 +1,44 @@
+<?php
+$min_dia = $this->dateFormat(new DateTime($this->resumo["min_dia"]),IntlDateFormatter::MEDIUM,IntlDateFormatter::NONE, 'pt_BR');
+$max_dia = $this->dateFormat(new DateTime($this->resumo["max_dia"]),IntlDateFormatter::MEDIUM,IntlDateFormatter::NONE, 'pt_BR');
+
+
+?>
 <div class="row">
 
     <div class="col-md">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><?php echo $this->translate('Painel de Controle') ?></h3>
+                <h3 class="panel-title"><?php echo $this->translate('Resumo dos dados') ?></h3>
             </div>
             <div class="panel-body">
-                <p></p>
-
+                <table class="table table-striped table-hover small">
+                    <thead>
+                    <tr>
+                        <th>Total Dias</th>
+                        <th>Intervalo Dias</th>
+                        <th>Total Registros</th>
+                        <th>Total Cidades</th>
+                        <th>Tamanho Banco</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><?php echo $this->resumo["total_dias"]?></td>
+                            <td><?php echo $min_dia?> - <?php echo $max_dia?></td>
+                            <td><?php echo $this->resumo["total_registros"]?></td>
+                            <td><?php echo $this->resumo["total_cidades"]?></td>
+                            <td><?php echo $this->resumo["tamanho_schema"]?>MB</td>
+                        </tr>
+                    </tbody>
+                    </table>
             </div>
         </div>
     </div>
 
+    <div class="jumbotron">
+        <p><img src="img/logoCx300.png" class="center-block"/></p>
+    </div>
+
 </div>
 
-<div class="jumbotron">
-    <p><img src="img/logoCx300.png" class="center-block"/></p>
-</div>
