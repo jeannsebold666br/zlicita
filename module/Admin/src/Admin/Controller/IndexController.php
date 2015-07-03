@@ -11,11 +11,17 @@ namespace Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Pesquisa\Model\RegistroTable;
 
 class IndexController extends AbstractActionController
 {
     public function indexAction()
     {
-        return new ViewModel();
+        $registro = new RegistroTable();
+        $relatorio = $registro->relatorioGeral();
+
+        return new ViewModel(array(
+            'resumo' => $relatorio,
+        ));
     }
 }

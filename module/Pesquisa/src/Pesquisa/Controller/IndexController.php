@@ -21,7 +21,6 @@ class IndexController extends AbstractActionController
         $form = new Pesquisa();
         $request = $this->getRequest();
         $paginator = array();
-        $page = (int)$this->params()->fromRoute('page',1);
         $session =  $this->getServiceLocator()->get('Session');
         $reset = false;
 
@@ -51,17 +50,18 @@ class IndexController extends AbstractActionController
 
         }
 
-        //var_dump($page);
+        //var_dump($data);
         //var_dump($user->pesquisa);
 
         if(isset($user->pesquisa)) {
             $registro = new RegistroTable();
             $data = $user->pesquisa;
             $form->setData($data);
+            $id = $this->params()->fromRoute('');
 
             try {
                 $paginator = $registro->pesquisar($data);
-                $paginator->setCurrentPageNumber($page)
+                $paginator->setCurrentPageNumber(1)
                     ->setItemCountPerPage(100)
                     ->setPageRange(20);
 
