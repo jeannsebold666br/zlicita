@@ -1,0 +1,67 @@
+<div class="row">
+
+    <div class="col-md">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><?php echo $this->translate('Resgistro').": #".$this->registro->id_registro ?></h3>
+            </div>
+            <div class="panel-body">
+
+                <table class="table table-striped table-hover small">
+                    <tbody>
+                    <tr>
+                        <th>Cidade/Estado</th><td><?php echo $this->registro->cidade." - ".$this->registro->estado;?></td>
+                    </tr>
+                    <tr>
+                        <th>UASG</th><td><?php echo $this->registro->uasg;?></td>
+                    </tr>
+                    <tr>
+                        <th>Orgãos</th><td>
+                                    <ul>
+                                        <li><?php echo $this->registro->orgao1;?></li>
+                                        <li><?php echo $this->registro->orgao2;?></li>
+                                        <li><?php echo $this->registro->orgao3;?></li>
+                                    </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Pregão</th><td><?php echo $this->registro->pregao;?></td>
+                    </tr>
+                    <tr>
+                        <th>Objeto</th><td><pre><?php echo $this->registro->objeto;?></pre></td>
+                    </tr>
+                    <tr>
+                        <th>Edital</th><td><?php echo $this->registro->edital;?></td>
+                    </tr>
+                    <tr>
+                        <th>Endereço</th><td><?php echo $this->registro->endereco;?></td>
+                    </tr>
+                    <tr>
+                        <th>Telefone</th><td><?php echo $this->registro->telefone;?></td>
+                    </tr>
+                    <tr>
+                        <th>Fax</th><td><?php echo $this->registro->fax;?></td>
+                    </tr>
+                    <tr>
+                        <th>Proposta</th><td><?php echo $this->registro->proposta;?></td>
+                    </tr>
+                    <tr>
+                        <th>Itens Serviço</th><td><pre><?php echo $this->registro->item_servico;?></pre></td>
+                    </tr>
+                    <tr>
+                        <th>Itens Material</th><td><pre><?php echo $this->registro->item_material;?></pre></td>
+                    </tr>
+                    <tr>
+                        <th>Link Original</th><td><a target="_blank" href="<?php echo $this->registro->url; ?>"><?php echo $this->formButton(new \Zend\Form\Element\Button('zoom-in',array('glyphicon' => 'zoom-in')));?></td>
+                    </tr>
+                    <tr>
+                        <th>Link Download</th><td><a target="_blank" href="<?php echo $this->registro->link_download; ?>"><?php echo $this->formButton(new \Zend\Form\Element\Button('download',array('glyphicon' => 'download-alt')));?></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>

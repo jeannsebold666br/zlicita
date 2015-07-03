@@ -11,6 +11,7 @@ return array(
         'Application',
         'TwbBundle',
         'Admin',
+        'Pesquisa',
     ),
 
     // These are various options for the listeners attached to the ModuleManager

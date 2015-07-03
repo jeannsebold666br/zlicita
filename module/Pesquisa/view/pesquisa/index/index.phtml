@@ -1,0 +1,78 @@
+<div class="row">
+
+    <div class="col-md">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><?php echo $this->translate('Pesquisa') ?></h3>
+            </div>
+            <div class="panel-body">
+                <p>
+                    <?php echo $this->alert($this->flashMessenger()->render('error'),array('class' => 'alert-danger'),true);?>
+                    <?php echo $this->form($form, \TwbBundle\Form\View\Helper\TwbBundleForm::LAYOUT_INLINE);?>
+                </p>
+
+
+                <?php if (count($this->paginator)): ?>
+                    <table class="table table-striped table-hover small">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Data</th>
+                                <th>UASG</th>
+                                <th>Orgãos</th>
+                                <th>Cidade/UF</th>
+                                <th>Edital</th>
+                                <th>Entrega</th>
+                                <th>Serviço/Material</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($this->paginator as $item):
+                            $orgaos = "<ul>";
+                            if(strlen($item->orgao1) > 0){
+                                $orgaos .= "<li>".$item->orgao1."</li>";
+                            }
+                            if(strlen($item->orgao2) > 0){
+                                $orgaos .= "<li>".$item->orgao2."</li>";
+                            }
+                            if(strlen($item->orgao3) > 0){
+                                $orgaos .= "<li>".$item->orgao3."</li>";
+                            }
+                            $orgaos .= "</ul>";
+
+                            $data = $this->dateFormat(new DateTime($item->data),IntlDateFormatter::MEDIUM,IntlDateFormatter::NONE, 'pt_BR');
+
+                            ?>
+                            <tr>
+                                <td><?php echo $item->id_registro; ?></td>
+                                <td><?php echo $data; ?></td>
+                                <td><?php echo $item->uasg; ?></td>
+                                <td><?php echo $orgaos; ?></td>
+                                <td><?php echo $item->cidade." - ".$item->estado; ?></td>
+                                <td><?php echo $item->edital; ?></td>
+                                <td><?php echo $item->proposta; ?></td>
+                                <td>
+                                    <strong>S</strong> <?php if(strlen($item->item_servico)>0): echo $this->glyphicon('ok'); else: echo $this->glyphicon('remove');?><?php endif;?> /
+                                    <strong>M</strong> <?php if(strlen($item->item_material)>0): echo $this->glyphicon('ok'); else: echo $this->glyphicon('remove');?><?php endif;?>
+                                </td>
+                                <td><a target="_blank" href="<?php echo $item->link_download; ?>"><?php echo $this->formButton(new \Zend\Form\Element\Button('download',array('glyphicon' => 'download-alt')));?></a>
+                                    <a target="_blank" href="/pesquisa/index/registro/id/<?php echo $item->id_registro; ?>"><?php echo $this->formButton(new \Zend\Form\Element\Button('zoom-in',array('glyphicon' => 'zoom-in')));?></a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                    <?php echo $this->paginationControl($this->paginator,
+                        'Sliding',
+                        array('pagination/pagination.phtml', 'Pesquisa'),
+                        array('route' => 'pesquisa','controllerName' => 'index', 'actionName' => 'index')); ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+ <?php if($this->reset):?>
+     <script>document.pesquisa.reset();</script>
+ <?php endif;?>
