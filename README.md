@@ -26,3 +26,10 @@ Ele entra em um sistema de licitação, efetua login, e inicia a coleta das info
 * HTML5 + jQuery + Bootstrap
 * Selenium
 
+
+## Ambiente de teste
+
+http://zlicita.zed.net.br/
+
+- **Usuário:** admin
+- **Senha:** contador_123
