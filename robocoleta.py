@@ -12,18 +12,18 @@ import time
 
 class PythonOrgSearch(unittest.TestCase):
 
+    # Inicia as conexões 
     def setUp(self):
         self.driver = webdriver.Chrome()
         self.driver.implicitly_wait(10)
         
         self.db = pymysql.connect(user="root",passwd="tux",db="zlicita", host="localhost",  charset="utf8",  use_unicode=True)
 
-
+    # Start
     def test_main(self):
         lista = self.getColeta()
         
         driver = self.roboLogin()
-        #driver = self.driver
 
         for registro  in lista:
             i = datetime.now()
@@ -43,7 +43,7 @@ class PythonOrgSearch(unittest.TestCase):
             print ("===> finalizado dia {} em {} <===".format(registro[3], dtend))
             print()
 
-
+    # Finaliza a coleta
     def finalizaColeta(self, id_coleta, dtstart, dtend):
         db = self.db
         cursor = db.cursor()
@@ -52,9 +52,8 @@ class PythonOrgSearch(unittest.TestCase):
         print(sql)
         cursor.execute(sql)
         db.commit()
-        #db.close()
 
-
+    # Atualiza o status da coleta
     def atualizaColeta(self, id_coleta, total, coletado, dtstart, dtend):
         db = self.db
         cursor = db.cursor()
@@ -65,6 +64,7 @@ class PythonOrgSearch(unittest.TestCase):
         db.commit()
 
 
+    # Rotina principal da coleta
     def coletar(self, driver, registro):
         id_coleta = registro[0]
         total = registro[1]
@@ -85,7 +85,6 @@ class PythonOrgSearch(unittest.TestCase):
         self.assertIn("Comprasnet", driver.title)
         url = driver.current_url
         print("-- URL: {}".format(url))
-        #driver.get("https://www.comprasnet.gov.br/ConsultaLicitacoes/ConsLicitacao_Relacao.asp?numprp=&dt_publ_ini="+dia+"&dt_publ_fim="+dia+"&chkModalidade=1,2,3,20,5,99&chk_concor=&chk_pregao=&chk_rdc=&optTpPesqMat=M&optTpPesqServ=S&chkTodos=-1&chk_concorTodos=&chk_pregaoTodos=&txtlstUf=&txtlstMunicipio=&txtlstUasg=&txtlstGrpMaterial=&txtlstClasMaterial=&txtlstMaterial=&txtlstGrpServico=&txtlstServico=&txtObjeto=&numpag=1")
 
         time.sleep(1)
 
@@ -154,7 +153,6 @@ class PythonOrgSearch(unittest.TestCase):
 
 
                 cidade_estado = driver.find_element_by_xpath("/html/body/table[2]/tbody/tr[3]/td[2]/form["+str(form)+"]/table/tbody/tr[1]/td[2]/table/tbody/tr/td[2]").text
-                #driver.find_element_by_xpath("/html/body/table[2]/tbody/tr[3]/td[2]/form["+str(form)+"]/table/tbody/tr[2]/td[2]/input[3]").click()
                 itens = driver.find_elements_by_name('itens')
                 itens[form-1].click()
                 url_registro = driver.current_url
@@ -325,6 +323,7 @@ class PythonOrgSearch(unittest.TestCase):
 
         return  driver
 
+    # Insere os registros no banco
     def insertRegistro(self, registros):
         db = self.db
         cursor = db.cursor()
@@ -366,6 +365,7 @@ class PythonOrgSearch(unittest.TestCase):
         self.driver.close()
 
 
+    # Efetua o login no sistema
     def roboLogin(self):
         print("### Efetuando login no sistema ###")
 
@@ -376,8 +376,8 @@ class PythonOrgSearch(unittest.TestCase):
 
         # Login
         driver.find_element_by_xpath('//*[@id="perfil"]/option[2]').click()
-        driver.find_element_by_xpath('//*[@id="txtLogin"]').send_keys('Vergilio')
-        driver.find_element_by_xpath('//*[@id="txtSenha"]').send_keys('NOVA0001')
+        driver.find_element_by_xpath('//*[@id="txtLogin"]').send_keys('')
+        driver.find_element_by_xpath('//*[@id="txtSenha"]').send_keys('')
         driver.find_element_by_xpath('//*[@id="acessar"]').click()
 
 
@@ -395,6 +395,7 @@ class PythonOrgSearch(unittest.TestCase):
         return driver
 
 
+    # Monta a lista para coletar
     def getColeta(self):
         db = self.db
         cursor = db.cursor()
@@ -413,9 +414,6 @@ class PythonOrgSearch(unittest.TestCase):
             print("Carregando dia {} ...".format(row[3]))
             item = [row[0],row[1],row[2],row[3]]
             lista.append(item)
-
-        # disconnect from server
-        #db.close()
 
         return lista
 
