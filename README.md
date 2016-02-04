@@ -1,4 +1,7 @@
 # ZLicita
+
+![ZLicita](https://raw.githubusercontent.com/zedmaster/zlicita/master/public/img/logoCx300.png)
+
 Ferramenta que auxilia na consultoria de licitações.
 
 Esta solução, consiste em um robô de coleta de dados e uma interface web para navegar nas pesquisas coletadas.
